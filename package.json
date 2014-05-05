@@ -1,0 +1,27 @@
+{
+  "name": "broccoli-kss",
+  "version": "0.0.0",
+  "description": "A broccoli plugin for KSS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/habdelra/broccoli-kss.git"
+  },
+  "keywords": [
+    "kss",
+    "broccoli"
+  ],
+  "author": "MHE Labs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/habdelra/broccoli-kss/issues"
+  },
+  "homepage": "https://github.com/habdelra/broccoli-kss",
+  "dependencies": {
+    "broccoli-writer": "^0.1.1",
+    "kss": "latest"
+  }
+}
