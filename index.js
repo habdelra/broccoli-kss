@@ -1,5 +1,3 @@
-var path = require('path')
-var helpers = require('broccoli-kitchen-sink-helpers')
 var Writer = require('broccoli-writer');
 
 module.exports = KssCompiler;
