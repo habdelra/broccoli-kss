@@ -1,4 +1,4 @@
-export default function(sourceDir, destinationDir, templateDir, sassFile) {
+return function(sourceDir, destinationDir, templateDir, sassFile) {
   var kss = require('kss'),
     preCompiler = kss.precompilers,
     handlebars = require('handlebars'),

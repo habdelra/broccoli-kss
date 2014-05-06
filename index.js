@@ -1,5 +1,5 @@
 var Writer = require('broccoli-writer');
-var kss = require('kss-node');
+var kss = require('./kss-node.js');
 var options = {
   markdown: false
 };
