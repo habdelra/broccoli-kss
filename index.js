@@ -19,7 +19,8 @@ function KssCompiler(sourceTree, options) {
 };
 
 KssCompiler.prototype.write = function(readTree, destDir) {
-  readTree(this.sourceTree).then(function(srcDir){
-    kss(srcDir, destDir, this.kssOptions.templateDir, this.kssOptions.sassFile);
+  var self = this;
+  return readTree(this.sourceTree).then(function(srcDir){
+    kss(srcDir, destDir, self.kssOptions.templateDir, self.kssOptions.sassFile);
   });
 };
