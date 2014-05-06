@@ -386,7 +386,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
 
   process.on('uncaughtException', function(err) {
     console.log(err.message);
-    console.log(errgg.stack);
+    console.log(err.stack);
     KSS_FAILED = true;
     process.exit(1);
   })
