@@ -206,7 +206,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         })
       );
     } catch (e) {
-      console.log('...no styleguide overview generated:', e.message);
+     // console.log('...no styleguide overview generated:', e.message);
     }
   };
 
