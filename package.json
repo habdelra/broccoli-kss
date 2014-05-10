@@ -1,6 +1,6 @@
 {
   "name": "broccoli-kss",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A broccoli plugin for KSS",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,9 @@
     "kss",
     "broccoli"
   ],
-  "author": "MHE Labs",
+  "author": {
+    "name": "MHE Labs"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/habdelra/broccoli-kss/issues"
@@ -33,6 +35,12 @@
     "optimist": "0.3.x",
     "clean-css": "0.3.x",
     "async": "0.1.x",
-    "rsvp": "^3.0.4"
-  }
+    "rsvp": "^3.0.4",
+    "mkdirp": "^0.3.5"
+  },
+  "readme": "ERROR: No README data found!",
+  "readmeFilename": "README.md",
+  "_id": "broccoli-kss@0.0.7",
+  "_shasum": "02588254bad18905159b2cab50a503ada90bb469",
+  "_from": "broccoli-kss@latest"
 }

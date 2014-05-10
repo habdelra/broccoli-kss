@@ -1,5 +1,7 @@
 var Writer = require('broccoli-writer');
 var RSVP = require('rsvp');
+var path = require('path');
+var mkdirp = require('mkdirp');
 
 module.exports = KssCompiler;
 KssCompiler.prototype = Object.create(Writer.prototype);
@@ -15,7 +17,9 @@ KssCompiler.prototype.write = function(readTree, destDir) {
   var self = this
   return new RSVP.Promise(function(resolve, reject){
     return readTree(self.sourceTree).then(function(srcDir) {
-      self.compile(srcDir, self.options.destDir || destDir, self.options.sassFile, self.options.templateDir, resolve, reject);
+      var kssDir = destDir + '/' + (self.options.destDir || '');
+      mkdirp.sync(path.dirname(kssDir));
+      self.compile(srcDir, kssDir, self.options.sassFile, self.options.templateDir, resolve, reject);
     });
   });
 };
@@ -32,7 +36,6 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
     async = require('async'),
     util = require('util'),
     less = require('less'),
-    path = require('path'),
     fs = require('fs'),
     template, styleguide,
     generatePage, generateStylesheet,
@@ -227,7 +230,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         })
       );
     } catch (e) {
-      //console.log('...no styleguide overview generated:', e.message);
+      console.log('...no styleguide overview generated:', e.message);
     }
   };
 
