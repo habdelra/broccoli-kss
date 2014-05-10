@@ -24,7 +24,7 @@ KssCompiler.prototype.write = function(readTree, destDir) {
   });
 };
 
-KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateDir, resolve) {
+KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateDir, resolve, reject) {
   var kss = require('kss'),
     preCompiler = kss.precompilers,
     handlebars = require('handlebars'),
@@ -83,7 +83,10 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         markup: true,
         mask: preCompiler.mask
       }, function(err, sg) {
-        if (err) throw err
+        if (err) {
+          reject(err);
+          throw err
+        }
 
         styleguide = sg;
 
