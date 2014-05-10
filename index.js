@@ -1,23 +1,26 @@
 var Writer = require('broccoli-writer');
+var RSVP = require('rsvp');
 
 module.exports = KssCompiler;
 KssCompiler.prototype = Object.create(Writer.prototype);
 KssCompiler.prototype.constructor = KssCompiler;
 
-function KssCompiler(inputTree, options) {
-  if (!(this instanceof KssCompiler)) return new KssCompiler(inputTree, options);
-  this.inputTree = inputTree;
+function KssCompiler(sourceTree, options) {
+  if (!(this instanceof KssCompiler)) return new KssCompiler(sourceTree, options);
+  this.sourceTree = sourceTree;
   this.options = options || {};
 };
 
 KssCompiler.prototype.write = function(readTree, destDir) {
   var self = this
-  return readTree(this.inputTree).then(function(srcDir) {
-    self.compile(srcDir, destDir, self.options.sassFile, self.options.templateDir);
-  })
+  return new RSVP.Promise(function(resolve, reject){
+    return readTree(self.sourceTree).then(function(srcDir) {
+      self.compile(srcDir, self.options.destDir || destDir, self.options.sassFile, self.options.templateDir, resolve, reject);
+    });
+  });
 };
 
-KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateDir) {
+KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateDir, resolve) {
   var kss = require('kss'),
     preCompiler = kss.precompilers,
     handlebars = require('handlebars'),
@@ -59,17 +62,18 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
   // Generate the static HTML pages in the next tick, i.e. after the other functions have
   // been defined and handlebars helpers set up.
   process.nextTick(function() {
+    //console.log('...compiling KSS styles');
     less.render('@import "' + path.relative(process.cwd(), options.destinationDirectory) + '/public/kss.less";', function(err, css) {
       if (err) {
         console.error(err);
-        throw err;
+        reject(err)
       }
 
       css = cleanCss.process(css);
 
       // Write the compiled LESS styles from the template.
       fs.writeFileSync(options.destinationDirectory + '/public/kss.css', css, 'utf8');
-
+      //console.log('...parsing your styleguide');
       kss.traverse(options.sourceDirectory, {
         multiline: true,
         markdown: true,
@@ -86,6 +90,10 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
           currentRoot,
           rootCount, childSections = [],
           pages = {};
+
+        //console.log(sg.data.files.map(function(file) {
+        // return ' - ' + file
+        // }).join('\n'))
 
         // Accumulate all of the sections' first indexes
         // in case they don't have a root element.
@@ -122,6 +130,8 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
     var compilers = preCompiler.compilers,
       files
 
+      //console.log('...compiling additional stylesheets');
+
     files = ['sass'].map(function(type) {
 
 
@@ -150,6 +160,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         }
 
         type = type.toLowerCase()
+        //console.log(' - ' + filename + ' (' + type + ')')
 
         if (type === 'css') return next(null, fs.readFileSync(filename, 'utf8'))
         compilers[type].render(filename, next)
@@ -161,8 +172,12 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         return next(null, combined)
       });
     }, function(err, combined) {
-      if (err) throw err
-      saveStylesheet(combined)
+      if (err) {
+        reject(err);
+      }
+
+      saveStylesheet(combined);
+      resolve();
     });
   };
 
@@ -179,6 +194,11 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
   // Renders the handlebars template for a section and saves it to a file.
   // Needs refactoring for clarity.
   generatePage = function(styleguide, sections, root, pages, sectionRoots) {
+    // console.log(
+      // '...generating section ' + root + ' [',
+      // styleguide.section(root) ? styleguide.section(root).header() : 'Unnamed',
+      // ']'
+    // );
     fs.writeFileSync(options.destinationDirectory + '/section-' + root + '.html',
       template({
         styleguide: styleguide,
@@ -195,6 +215,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
   // using first Markdown and then Handlebars
   generateIndex = function(styleguide, sections, pages, sectionRoots) {
     try {
+      //console.log('...generating styleguide overview');
       fs.writeFileSync(options.destinationDirectory + '/index.html',
         template({
           styleguide: styleguide,
@@ -206,7 +227,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         })
       );
     } catch (e) {
-     // console.log('...no styleguide overview generated:', e.message);
+      //console.log('...no styleguide overview generated:', e.message);
     }
   };
 
@@ -381,6 +402,9 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
 
   process.on('exit', function() {
     if (!KSS_FAILED) {
+      //console.log('');
+      //console.log('Generation completed successfully!');
+      //console.log('');
     }
   });
 
