@@ -28,6 +28,10 @@ var outputTree = compileKss(inputTree, options);
 ### Example
 
 ```js
+var inputTree = pickFiles('kss', {
+  srcDir: '/',
+  destDir: '/'
+});
 var styleguide = compileKss(inputTree, {
   templateDir: 'kss/template',
   sassFile: 'kss/styles.scss',
@@ -35,4 +39,4 @@ var styleguide = compileKss(inputTree, {
 });
 ```
 
-Where your KSS documentation lives under ```{project_home}/kss```, and the top level scss file for your documentation lives is at ```{project_home}/kss/styles.scss```. This will output your style guide in the folder:  ```{broccoli_output}/styleguide```.
+Where your KSS documentation lives under ```{project_home}/kss```, your KSS templates live under the ```{project_home}/kss/templates``` folder, and the top level scss file for your documentation lives is at ```{project_home}/kss/styles.scss```. This will output your style guide in the folder:  ```{broccoli_output}/styleguide```.
