@@ -39,4 +39,4 @@ var styleguide = compileKss(inputTree, {
 });
 ```
 
-Where your KSS documentation lives under ```{project_home}/kss```, your KSS templates live under the ```{project_home}/kss/templates``` folder, and the top level scss file for your documentation lives is at ```{project_home}/kss/styles.scss```. This will output your style guide in the folder:  ```{broccoli_output}/styleguide```.
+Where your KSS documentation lives under ```{project_home}/kss```, your KSS templates live under the ```{project_home}/kss/template``` folder, and the top level scss file for your documentation lives is at ```{project_home}/kss/styles.scss```. This will output your style guide in the folder:  ```{broccoli_output}/styleguide```.
