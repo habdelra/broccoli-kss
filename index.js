@@ -65,7 +65,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
   // Generate the static HTML pages in the next tick, i.e. after the other functions have
   // been defined and handlebars helpers set up.
   process.nextTick(function() {
-    //console.log('...compiling KSS styles');
+    console.log('\n...compiling KSS styles');
     less.render('@import "' + path.relative(process.cwd(), options.destinationDirectory) + '/public/kss.less";', function(err, css) {
       if (err) {
         console.error(err);
@@ -76,7 +76,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
 
       // Write the compiled LESS styles from the template.
       fs.writeFileSync(options.destinationDirectory + '/public/kss.css', css, 'utf8');
-      //console.log('...parsing your styleguide');
+      // console.log('...parsing your styleguide');
       kss.traverse(options.sourceDirectory, {
         multiline: true,
         markdown: true,
@@ -97,8 +97,8 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
           rootCount, childSections = [],
           pages = {};
 
-        //console.log(sg.data.files.map(function(file) {
-        // return ' - ' + file
+        // console.log(sg.data.files.map(function(file) {
+          // return ' - ' + file
         // }).join('\n'))
 
         // Accumulate all of the sections' first indexes
@@ -126,76 +126,10 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         }
 
         generateIndex(styleguide, childSections, pages, sectionRoots);
-        generateStylesheet(argv);
+        resolve();
       });
     });
   });
-
-  // Compile LESS/Stylus/CSS files into a single "style.css" if required
-  generateStylesheet = function(argv) {
-    var compilers = preCompiler.compilers,
-      files
-
-      //console.log('...compiling additional stylesheets');
-
-    files = ['sass'].map(function(type) {
-
-
-      return {
-        //files: Array.isArray(argv[key]) ? argv[key] : [argv[key]]
-        files: [sassFile],
-        type: type
-      };
-    });
-
-    async.reduce(files, [], function(combined, group, next) {
-      if (!group) return next(null, combined)
-
-
-      async.map(group.files, function(filename, next) {
-        var type = group.type,
-          extension
-
-          // Type-guessing for --style option
-        if (!type) {
-          extension = path.extname(filename).slice(1)
-          Object.keys(compilers).forEach(function(name) {
-            if (compilers[name].extensions.indexOf(extension) !== -1) type = name
-          })
-          type = type || 'css'
-        }
-
-        type = type.toLowerCase()
-        //console.log(' - ' + filename + ' (' + type + ')')
-
-        if (type === 'css') return next(null, fs.readFileSync(filename, 'utf8'))
-        compilers[type].render(filename, next)
-
-      }, function(err, output) {
-        if (err) return next(err)
-        combined += '\n'
-        combined += output.join('\n')
-        return next(null, combined)
-      });
-    }, function(err, combined) {
-      if (err) {
-        reject(err);
-      }
-
-      saveStylesheet(combined);
-      resolve();
-    });
-  };
-
-  // Used by generateStylesheet to minify and then
-  // save its final buffer to a single CSS file.
-  saveStylesheet = function(buffer) {
-    buffer = cleanCss.process(buffer.toString());
-    fs.writeFileSync(
-      options.destinationDirectory + '/public/style.css',
-      buffer, 'utf8'
-    );
-  };
 
   // Renders the handlebars template for a section and saves it to a file.
   // Needs refactoring for clarity.
@@ -221,7 +155,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
   // using first Markdown and then Handlebars
   generateIndex = function(styleguide, sections, pages, sectionRoots) {
     try {
-      //console.log('...generating styleguide overview');
+      // console.log('...generating styleguide overview');
       fs.writeFileSync(options.destinationDirectory + '/index.html',
         template({
           styleguide: styleguide,
@@ -233,7 +167,7 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
         })
       );
     } catch (e) {
-      console.log('...no styleguide overview generated:', e.message);
+      // console.log('...no styleguide overview generated:', e.message);
     }
   };
 
@@ -408,9 +342,9 @@ KssCompiler.prototype.compile = function(sourceDir, destDir, sassFile, templateD
 
   process.on('exit', function() {
     if (!KSS_FAILED) {
-      //console.log('');
-      //console.log('Generation completed successfully!');
-      //console.log('');
+      // console.log('');
+      // console.log('Generation completed successfully!');
+      // console.log('');
     }
   });
 
